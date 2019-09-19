@@ -8,6 +8,7 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"strconv"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -15,6 +16,38 @@ import (
 	"golang.org/x/image/font/basicfont"
 	"golang.org/x/image/math/fixed"
 )
+
+func parseHexColor(s string) (c color.RGBA, err error) {
+	c.A = 0xff
+
+	hexToByte := func(b byte) byte {
+		switch {
+		case b >= '0' && b <= '9':
+			return b - '0'
+		case b >= 'a' && b <= 'f':
+			return b - 'a' + 10
+		case b >= 'A' && b <= 'F':
+			return b - 'A' + 10
+		}
+		return 0
+	}
+
+	switch len(s) {
+	case 6:
+		c.R = hexToByte(s[0])<<4 + hexToByte(s[1])
+		c.G = hexToByte(s[2])<<4 + hexToByte(s[3])
+		c.B = hexToByte(s[4])<<4 + hexToByte(s[5])
+	case 3:
+		c.R = hexToByte(s[0]) * 17
+		c.G = hexToByte(s[1]) * 17
+		c.B = hexToByte(s[2]) * 17
+	default:
+		c.R = 255
+		c.G = 255
+		c.B = 255
+	}
+	return
+}
 
 func addLabel(img *image.RGBA, width int, height int, label string) {
 	col := color.RGBA{255, 255, 255, 255}
@@ -50,11 +83,15 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Origin": "*",
 	}
 
-	x := 400
-	y := 200
-	label := fmt.Sprintf("%d x %d", x, y)
+	fmt.Println("%+v", request)
+	params := request.QueryStringParameters
 
-	image := createImage(x, y, color.RGBA{50, 50, 50, 25})
+	x, _ := strconv.Atoi(params["x"])
+	y, _ := strconv.Atoi(params["y"])
+	label := fmt.Sprintf("%d x %d", x, y)
+	bgColor, _ := parseHexColor(params["bg"])
+
+	image := createImage(x, y, bgColor)
 	addLabel(image, x, y, label)
 
 	buf := new(bytes.Buffer)
