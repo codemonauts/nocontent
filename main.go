@@ -53,8 +53,9 @@ func addLabel(img *image.RGBA, width int, height int, label string) {
 	col := color.RGBA{255, 255, 255, 255}
 
 	// Single character is 13px tall and 7px wide
+	// Get middle of image and apply offset depending on label length
 	x := (width / 2) - (len(label)*7)/2
-	y := (height / 2) - 6
+	y := (height / 2) + 6
 
 	point := fixed.Point26_6{fixed.Int26_6(x * 64), fixed.Int26_6(y * 64)}
 
