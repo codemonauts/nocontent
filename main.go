@@ -8,7 +8,9 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -49,9 +51,7 @@ func parseHexColor(s string) (c color.RGBA, err error) {
 	return
 }
 
-func addLabel(img *image.RGBA, width int, height int, label string) {
-	col := color.RGBA{255, 255, 255, 255}
-
+func addLabel(img *image.RGBA, width int, height int, label string, fg color.RGBA) {
 	// Single character is 13px tall and 7px wide
 	// Get middle of image and apply offset depending on label length
 	x := (width / 2) - (len(label)*7)/2
@@ -61,7 +61,7 @@ func addLabel(img *image.RGBA, width int, height int, label string) {
 
 	d := &font.Drawer{
 		Dst:  img,
-		Src:  image.NewUniform(col),
+		Src:  image.NewUniform(fg),
 		Face: basicfont.Face7x13,
 		Dot:  point,
 	}
@@ -81,6 +81,8 @@ func createImage(width int, height int, bgColor color.RGBA) *image.RGBA {
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	headers := map[string]string{
 		"Content-Type":                "image/png",
+		"Expires":                     time.Now().AddDate(1, 0, 0).Format(http.TimeFormat),
+		"Last-Modified":               time.Now().Format(http.TimeFormat),
 		"Access-Control-Allow-Origin": "*",
 	}
 
@@ -91,9 +93,10 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	y, _ := strconv.Atoi(params["y"])
 	label := fmt.Sprintf("%d x %d", x, y)
 	bgColor, _ := parseHexColor(params["bg"])
+	fgColor, _ := parseHexColor(params["fg"])
 
 	image := createImage(x, y, bgColor)
-	addLabel(image, x, y, label)
+	addLabel(image, x, y, label, fgColor)
 
 	buf := new(bytes.Buffer)
 	png.Encode(buf, image)
