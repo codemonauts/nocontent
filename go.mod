@@ -1,4 +1,4 @@
-module github.com/codemonauts/placeholder
+module github.com/codemonauts/nocontent-lambda
 
 go 1.12
 

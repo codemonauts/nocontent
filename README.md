@@ -1,6 +1,9 @@
-# image-placeholder
+# nocontent-lambda
 
-Call me with:
+The magic smoke behind [nocontent.xyz](https://nocontent.xyz)
+
+## Usage
+To get a purple PNG with the dimensions 400x600, query this address:
 ```
-https://blk1ki6uu8.execute-api.eu-central-1.amazonaws.com/prod/?x=400&y=600&bg=980080
+https://nocontent.xyz/img?x=400&y=600&bg=980080
 ```
