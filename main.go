@@ -117,6 +117,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	png.Encode(buf, image)
 
 	b64Image := base64.StdEncoding.EncodeToString(buf.Bytes())
+	fmt.Println(b64Image)
 
 	return events.APIGatewayProxyResponse{StatusCode: 200, Headers: headers, Body: b64Image, IsBase64Encoded: true}, nil
 }
