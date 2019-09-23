@@ -8,14 +8,16 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
-	"golang.org/x/image/font/basicfont"
 	"golang.org/x/image/math/fixed"
 )
 
@@ -44,28 +46,41 @@ func parseHexColor(s string) (c color.RGBA, err error) {
 		c.G = hexToByte(s[1]) * 17
 		c.B = hexToByte(s[2]) * 17
 	default:
-		c.R = 255
-		c.G = 255
-		c.B = 255
+		return c, fmt.Errorf("can't parse a color")
 	}
 	return
 }
 
-func addLabel(img *image.RGBA, width int, height int, label string, fg color.RGBA) {
-	// Single character is 13px tall and 7px wide
-	// Get middle of image and apply offset depending on label length
-	x := (width / 2) - (len(label)*7)/2
-	y := (height / 2) + 6
-
-	point := fixed.Point26_6{fixed.Int26_6(x * 64), fixed.Int26_6(y * 64)}
-
-	d := &font.Drawer{
-		Dst:  img,
-		Src:  image.NewUniform(fg),
-		Face: basicfont.Face7x13,
-		Dot:  point,
+func addLable(img *image.RGBA, width int, height int, lable string, fg color.RGBA) {
+	// Read the font data.
+	fontBytes, err := ioutil.ReadFile("Inconsolata.ttf")
+	if err != nil {
+		log.Println(err)
+		return
 	}
-	d.DrawString(label)
+	f, err := truetype.Parse(fontBytes)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	// Draw the text.
+	h := font.HintingFull
+	size := 30.0
+	dpi := 72.0
+	d := &font.Drawer{
+		Dst: img,
+		Src: image.NewUniform(fg),
+		Face: truetype.NewFace(f, &truetype.Options{
+			Size:    size,
+			DPI:     dpi,
+			Hinting: h,
+		}),
+	}
+	d.Dot = fixed.Point26_6{
+		X: (fixed.I(width) - d.MeasureString(lable)) / 2,
+		Y: (fixed.I(height) + fixed.I(int(size))) / 2,
+	}
+	d.DrawString(lable)
 }
 
 func createImage(width int, height int, bgColor color.RGBA) *image.RGBA {
@@ -86,22 +101,41 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Origin": "*",
 	}
 
-	fmt.Println("%+v", request)
 	params := request.QueryStringParameters
 
 	x, _ := strconv.Atoi(params["x"])
+	if x <= 0 || 2000 < x {
+		x = 200
+	}
+
 	y, _ := strconv.Atoi(params["y"])
-	label := fmt.Sprintf("%d x %d", x, y)
-	bgColor, _ := parseHexColor(params["bg"])
-	fgColor, _ := parseHexColor(params["fg"])
+	if y <= 0 || 2000 < y {
+		y = 200
+	}
+
+	lable, _ := params["lable"]
+	if lable == "" || len(lable) > 20 {
+		lable = fmt.Sprintf("%d x %d", x, y)
+	}
+
+	bgColor, err := parseHexColor(params["bg"])
+	if err != nil {
+		bgColor = color.RGBA{255, 255, 255, 255}
+	}
+
+	fgColor, err := parseHexColor(params["fg"])
+	if err != nil {
+		fgColor = color.RGBA{51, 51, 51, 255}
+	}
 
 	image := createImage(x, y, bgColor)
-	addLabel(image, x, y, label, fgColor)
+	addLable(image, x, y, lable, fgColor)
 
 	buf := new(bytes.Buffer)
 	png.Encode(buf, image)
 
 	b64Image := base64.StdEncoding.EncodeToString(buf.Bytes())
+	fmt.Println(b64Image)
 
 	return events.APIGatewayProxyResponse{StatusCode: 200, Headers: headers, Body: b64Image, IsBase64Encoded: true}, nil
 }
