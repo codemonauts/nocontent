@@ -8,14 +8,17 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"io/ioutil"
+	"log"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
-	"golang.org/x/image/font/basicfont"
 	"golang.org/x/image/math/fixed"
 )
 
@@ -52,20 +55,43 @@ func parseHexColor(s string) (c color.RGBA, err error) {
 }
 
 func addLabel(img *image.RGBA, width int, height int, label string, fg color.RGBA) {
-	// Single character is 13px tall and 7px wide
-	// Get middle of image and apply offset depending on label length
-	x := (width / 2) - (len(label)*7)/2
-	y := (height / 2) + 6
-
-	point := fixed.Point26_6{fixed.Int26_6(x * 64), fixed.Int26_6(y * 64)}
-
-	d := &font.Drawer{
-		Dst:  img,
-		Src:  image.NewUniform(fg),
-		Face: basicfont.Face7x13,
-		Dot:  point,
+	// Read the font data.
+	fontBytes, err := ioutil.ReadFile("Inconsolata.otf")
+	if err != nil {
+		log.Println(err)
+		return
 	}
-	d.DrawString(label)
+	f, err := truetype.Parse(fontBytes)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	// Draw the text.
+	h := font.HintingFull
+	size := 24
+	dpi := 72
+	d := &font.Drawer{
+		Dst: img,
+		Src: image.NewUniform(fg),
+		Face: truetype.NewFace(f, &truetype.Options{
+			Size:    size,
+			DPI:     dpi,
+			Hinting: h,
+		}),
+	}
+	y := 10 + int(math.Ceil(size**dpi/72))
+	dy := int(math.Ceil(size * *spacing * dpi / 72))
+	d.Dot = fixed.Point26_6{
+		X: (fixed.I(imgW) - d.MeasureString(title)) / 2,
+		Y: fixed.I(y),
+	}
+	d.DrawString(title)
+	y += dy
+	for _, s := range text {
+		d.Dot = fixed.P(10, y)
+		d.DrawString(s)
+		y += dy
+	}
 }
 
 func createImage(width int, height int, bgColor color.RGBA) *image.RGBA {
@@ -86,9 +112,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Origin": "*",
 	}
 
-	fmt.Println("%+v", request)
 	params := request.QueryStringParameters
-
 	x, _ := strconv.Atoi(params["x"])
 	y, _ := strconv.Atoi(params["y"])
 	label := fmt.Sprintf("%d x %d", x, y)
