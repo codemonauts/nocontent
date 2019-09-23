@@ -46,9 +46,7 @@ func parseHexColor(s string) (c color.RGBA, err error) {
 		c.G = hexToByte(s[1]) * 17
 		c.B = hexToByte(s[2]) * 17
 	default:
-		c.R = 255
-		c.G = 255
-		c.B = 255
+		return c, fmt.Errorf("can't parse a color")
 	}
 	return
 }
@@ -104,11 +102,31 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	}
 
 	params := request.QueryStringParameters
+
 	x, _ := strconv.Atoi(params["x"])
+	if x <= 0 || 2000 < x {
+		x = 200
+	}
+
 	y, _ := strconv.Atoi(params["y"])
-	lable := fmt.Sprintf("%d x %d", x, y)
-	bgColor, _ := parseHexColor(params["bg"])
-	fgColor, _ := parseHexColor(params["fg"])
+	if y <= 0 || 2000 < y {
+		y = 200
+	}
+
+	lable, _ := params["lable"]
+	if lable == "" || len(lable) > 20 {
+		lable = fmt.Sprintf("%d x %d", x, y)
+	}
+
+	bgColor, err := parseHexColor(params["bg"])
+	if err != nil {
+		bgColor = color.RGBA{255, 255, 255, 255}
+	}
+
+	fgColor, err := parseHexColor(params["fg"])
+	if err != nil {
+		fgColor = color.RGBA{51, 51, 51, 255}
+	}
 
 	image := createImage(x, y, bgColor)
 	addLable(image, x, y, lable, fgColor)
