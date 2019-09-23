@@ -32,8 +32,9 @@ build:
 
 deploy:
   stage: deploy
-  image: python:latest
+  image: python:3-buster
   script:
+    - apt update && apt install -y zip
     - pip install awscli
     - zip package.zip nocontent
     - aws lambda update-function-code --function-name=nocontent --zip=fileb://package.zip
