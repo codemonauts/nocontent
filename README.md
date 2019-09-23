@@ -18,3 +18,7 @@ https://nocontent.xyz/img?x=600&y=400&bg=980080
 
 To change the text color to blue add `fg`-parameter: https://nocontent.xyz/img?x=250&y=250&fg=0099FF  
 ![250x250](https://nocontent.xyz/img?x=250&y=250&fg=0099FF)
+
+
+
+:computer: with :heart: by [codemonauts](https://codemonauts.com)
