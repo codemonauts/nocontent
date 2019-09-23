@@ -39,7 +39,7 @@ deploy:
   script:
     - apt update && apt install -y zip
     - pip install awscli
-    - zip package.zip nocontent Inconsolata.otf
+    - zip package.zip nocontent Inconsolata.ttf
     - aws lambda update-function-code --function-name=nocontent --zip=fileb://package.zip
   tags:
     - docker

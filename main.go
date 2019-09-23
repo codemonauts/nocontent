@@ -55,7 +55,7 @@ func parseHexColor(s string) (c color.RGBA, err error) {
 
 func addLable(img *image.RGBA, width int, height int, lable string, fg color.RGBA) {
 	// Read the font data.
-	fontBytes, err := ioutil.ReadFile("Inconsolata.otf")
+	fontBytes, err := ioutil.ReadFile("Inconsolata.ttf")
 	if err != nil {
 		log.Println(err)
 		return
