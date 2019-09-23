@@ -1,23 +1,44 @@
-Get custom-sized placeholder images without any tracking whatsoever. :rocket:
+Get customized placeholder images for your mockups and website designs :rocket:
 
-# Usage
-The base URL is: https://nocontent.xyz/img
 
-## Parameter
+## Features
+ * Free
+ * Open Source
+ * Fast (delivered via a CDN)
+ 
+## Usage
+The base URL is: `https://nocontent.xyz/img`
+
+To customize the image you will get, prodive one or more of the following options as query string parameters:
+
 |name|description||value|
 |---|---|---|---|
-|x|width of image|mandatory|number (in pixels)|
-|y|height of image|mandatory|number (in pixels)|
-|bg|background color|optional (default: ffffff)|hex-value|
-|fg|text color|optional (default: 333333)|hex-value|
+|x|width of image|optional (default: 200)|number (in pixels)|
+|y|height of image|optional (default: 200)|number (in pixels)|
+|bg|background color|optional (default: ffffff)|hex-value (3 or 6 character)|
+|fg|text color|optional (default: 333333)|hex-value (3 or 6 character)|
+|lable|text on the image|optional (default: 'height' x 'width') | string (max-length: 20)
 
-## Example
-To get a purple PNG with the dimensions 600x400, query this address:
-https://nocontent.xyz/img?x=600&y=400&bg=980080  
+## Example #1
+Without any parameters you will get a small white image with black text and 200x200 px
+```
+https://nocontent.xyz/img
+```
+![200x200](https://nocontent.xyz/img)
+
+## Example #2
+To get a purple image with the dimensions 600x400, query this address:
+```
+https://nocontent.xyz/img?x=600&y=400&bg=980080
+```
 ![600x400](https://nocontent.xyz/img?x=600&y=400&bg=980080)
 
-To change the text color to blue add `fg`-parameter: https://nocontent.xyz/img?x=250&y=250&fg=0099FF  
-![250x250](https://nocontent.xyz/img?x=250&y=250&fg=0099FF)
+## Example #3
+Change the text color to blue and provide a custom text with this URL:
+```
+https://nocontent.xyz/img?lable=Hello%20World&fg=0099FF
+```
+![200x200](https://nocontent.xyz/img?lable=Hello%20World&fg=0099FF)
 
 
 
