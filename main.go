@@ -78,7 +78,7 @@ func addLable(img *image.RGBA, width int, height int, lable string, fg color.RGB
 	}
 	d.Dot = fixed.Point26_6{
 		X: (fixed.I(width) - d.MeasureString(lable)) / 2,
-		Y: (fixed.I(height) - fixed.I(int(size))) / 2,
+		Y: (fixed.I(height) + fixed.I(int(size))) / 2,
 	}
 	d.DrawString(lable)
 }
