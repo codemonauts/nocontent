@@ -1,0 +1,24 @@
+{
+  "name": "nocontent.xyz",
+  "version": "1.0.0",
+  "description": "custom and tracking free placeholder images",
+  "scripts": {
+    "build:demo": "fiddly"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codemonauts/nocontent-lambda.git"
+  },
+  "keywords": [
+    "placeholder"
+  ],
+  "author": "codemonauts",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/codemonauts/nocontent-lambda/issues"
+  },
+  "homepage": "https://nocontent.xyz",
+  "devDependencies": {
+    "fiddly": "^0.8.0"
+  }
+}
