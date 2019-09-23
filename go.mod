@@ -1,4 +1,4 @@
-module github.com/codemonauts/nocontent-lambda
+module github.com/codemonauts/nocontent
 
 go 1.12
 
