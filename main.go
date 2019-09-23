@@ -65,7 +65,7 @@ func addLable(img *image.RGBA, width int, height int, lable string, fg color.RGB
 	}
 	// Draw the text.
 	h := font.HintingFull
-	size := 24.0
+	size := 30.0
 	dpi := 72.0
 	d := &font.Drawer{
 		Dst: img,
@@ -76,9 +76,10 @@ func addLable(img *image.RGBA, width int, height int, lable string, fg color.RGB
 			Hinting: h,
 		}),
 	}
+	labelSize := d.MeasreString(lable)
 	d.Dot = fixed.Point26_6{
-		X: (fixed.I(width) - d.MeasureString(lable)) / 2,
-		Y: fixed.I(height),
+		X: (fixed.I(width) - lableSize) / 2,
+		Y: (fixed.I(height) - lableSize) / 2,
 	}
 	d.DrawString(lable)
 }
