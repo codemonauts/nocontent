@@ -1,0 +1,41 @@
+stages:
+  - dependencies
+  - build
+  - deploy
+
+dependencies:
+  stage: dependencies
+  image: golang:1.12
+  cache:
+    paths:
+      - .cache
+  script:
+    - export GOPATH="$CI_PROJECT_DIR/.cache"
+    - export GOBIN="$GOPATH/bin"
+    - mkdir -p .cache
+    - go get -v .
+  tags:
+    - docker
+
+build:
+  stage: build
+  image: golang:1.12
+  cache:
+    paths:
+      - .cache
+  script:
+    - export GOPATH="$CI_PROJECT_DIR/.cache"
+    - export GOBIN="$GOPATH/bin"
+    - go build
+  tags:
+    - docker
+
+deploy:
+  stage: deploy
+  image: python:latest
+  script:
+    - pip install awscli
+    - zip package.zip nocontent
+    - aws lambda update-function-code --function-name=nocontent --zip=fileb://package.zip
+  tags:
+    - docker

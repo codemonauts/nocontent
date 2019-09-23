@@ -10,7 +10,6 @@ import (
 	"image/png"
 	"io/ioutil"
 	"log"
-	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -54,7 +53,7 @@ func parseHexColor(s string) (c color.RGBA, err error) {
 	return
 }
 
-func addLabel(img *image.RGBA, width int, height int, label string, fg color.RGBA) {
+func addLable(img *image.RGBA, width int, height int, lable string, fg color.RGBA) {
 	// Read the font data.
 	fontBytes, err := ioutil.ReadFile("Inconsolata.otf")
 	if err != nil {
@@ -68,8 +67,8 @@ func addLabel(img *image.RGBA, width int, height int, label string, fg color.RGB
 	}
 	// Draw the text.
 	h := font.HintingFull
-	size := 24
-	dpi := 72
+	size := 24.0
+	dpi := 72.0
 	d := &font.Drawer{
 		Dst: img,
 		Src: image.NewUniform(fg),
@@ -79,19 +78,11 @@ func addLabel(img *image.RGBA, width int, height int, label string, fg color.RGB
 			Hinting: h,
 		}),
 	}
-	y := 10 + int(math.Ceil(size**dpi/72))
-	dy := int(math.Ceil(size * *spacing * dpi / 72))
 	d.Dot = fixed.Point26_6{
-		X: (fixed.I(imgW) - d.MeasureString(title)) / 2,
-		Y: fixed.I(y),
+		X: (fixed.I(width) - d.MeasureString(lable)) / 2,
+		Y: fixed.I(height),
 	}
-	d.DrawString(title)
-	y += dy
-	for _, s := range text {
-		d.Dot = fixed.P(10, y)
-		d.DrawString(s)
-		y += dy
-	}
+	d.DrawString(lable)
 }
 
 func createImage(width int, height int, bgColor color.RGBA) *image.RGBA {
@@ -115,12 +106,12 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	params := request.QueryStringParameters
 	x, _ := strconv.Atoi(params["x"])
 	y, _ := strconv.Atoi(params["y"])
-	label := fmt.Sprintf("%d x %d", x, y)
+	lable := fmt.Sprintf("%d x %d", x, y)
 	bgColor, _ := parseHexColor(params["bg"])
 	fgColor, _ := parseHexColor(params["fg"])
 
 	image := createImage(x, y, bgColor)
-	addLabel(image, x, y, label, fgColor)
+	addLable(image, x, y, lable, fgColor)
 
 	buf := new(bytes.Buffer)
 	png.Encode(buf, image)
