@@ -27,6 +27,9 @@ build:
     - export GOPATH="$CI_PROJECT_DIR/.cache"
     - export GOBIN="$GOPATH/bin"
     - go build
+  artifacts:
+    paths:
+     - nocontent
   tags:
     - docker
 
