@@ -13,7 +13,7 @@ The base URL is: https://nocontent.xyz/img
 
 ## Example
 To get a purple PNG with the dimensions 600x400, query this address:
-https://nocontent.xyz/img?x=600&y=400&bg=980080
+https://nocontent.xyz/img?x=600&y=400&bg=980080  
 ![600x400](https://nocontent.xyz/img?x=600&y=400&bg=980080)
 
 To change the text color to blue add `fg`-parameter: https://nocontent.xyz/img?x=250&y=250&fg=0099FF  
