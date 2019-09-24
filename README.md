@@ -12,8 +12,8 @@ To customize the image you will get, prodive one or more of the following option
 
 |name|description||value|
 |---|---|---|---|
-|x|width of image|optional (default: 200)|number (in pixels)|
-|y|height of image|optional (default: 200)|number (in pixels)|
+|x|width of image|optional (default: 200)|number (in pixels, max-width: 4000)|
+|y|height of image|optional (default: 200)|number (in pixels, max-height: 4000)|
 |bg|background color|optional (default: ffffff)|hex-value (3 or 6 character)|
 |fg|text color|optional (default: 333333)|hex-value (3 or 6 character)|
 |label|text on the image|optional (default: 'height' x 'width') | string (max-length: 20)

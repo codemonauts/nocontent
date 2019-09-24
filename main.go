@@ -21,7 +21,8 @@ import (
 	"golang.org/x/image/math/fixed"
 )
 
-func parseHexColor(s string) (c color.RGBA, err error) {
+func parseHexColor(s string, fallback color.RGBA) color.RGBA {
+	c := color.RGBA{}
 	c.A = 0xff
 
 	hexToByte := func(b byte) byte {
@@ -46,9 +47,9 @@ func parseHexColor(s string) (c color.RGBA, err error) {
 		c.G = hexToByte(s[1]) * 17
 		c.B = hexToByte(s[2]) * 17
 	default:
-		return c, fmt.Errorf("can't parse a color")
+		return fallback
 	}
-	return
+	return c
 }
 
 func addLabel(img *image.RGBA, width int, height int, label string, fg color.RGBA) {
@@ -93,6 +94,14 @@ func createImage(width int, height int, bgColor color.RGBA) *image.RGBA {
 	return img
 }
 
+func validatePixelDimension(value int) int {
+	if value <= 0 || 4000 < value {
+		value = 200
+	}
+
+	return value
+}
+
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	headers := map[string]string{
 		"Content-Type":                "image/png",
@@ -104,29 +113,19 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	params := request.QueryStringParameters
 
 	x, _ := strconv.Atoi(params["x"])
-	if x <= 0 || 2000 < x {
-		x = 200
-	}
+	x = validatePixelDimension(x)
 
 	y, _ := strconv.Atoi(params["y"])
-	if y <= 0 || 2000 < y {
-		y = 200
-	}
+	y = validatePixelDimension(y)
 
 	label, _ := params["label"]
 	if label == "" || len(label) > 20 {
 		label = fmt.Sprintf("%d x %d", x, y)
 	}
 
-	bgColor, err := parseHexColor(params["bg"])
-	if err != nil {
-		bgColor = color.RGBA{255, 255, 255, 255}
-	}
+	bgColor := parseHexColor(params["bg"], color.RGBA{255, 255, 255, 255})
 
-	fgColor, err := parseHexColor(params["fg"])
-	if err != nil {
-		fgColor = color.RGBA{51, 51, 51, 255}
-	}
+	fgColor := parseHexColor(params["fg"], color.RGBA{51, 51, 51, 255})
 
 	image := createImage(x, y, bgColor)
 	addLabel(image, x, y, label, fgColor)
