@@ -1,6 +1,5 @@
 Get customized placeholder images for your mockups and website designs :rocket:
 
-
 ## Features
  * Free
  * Open Source
