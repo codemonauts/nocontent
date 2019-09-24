@@ -51,7 +51,7 @@ func parseHexColor(s string) (c color.RGBA, err error) {
 	return
 }
 
-func addLable(img *image.RGBA, width int, height int, lable string, fg color.RGBA) {
+func addLabel(img *image.RGBA, width int, height int, label string, fg color.RGBA) {
 	// Read the font data.
 	fontBytes, err := ioutil.ReadFile("Inconsolata.ttf")
 	if err != nil {
@@ -77,10 +77,10 @@ func addLable(img *image.RGBA, width int, height int, lable string, fg color.RGB
 		}),
 	}
 	d.Dot = fixed.Point26_6{
-		X: (fixed.I(width) - d.MeasureString(lable)) / 2,
+		X: (fixed.I(width) - d.MeasureString(label)) / 2,
 		Y: (fixed.I(height) + fixed.I(int(size))) / 2,
 	}
-	d.DrawString(lable)
+	d.DrawString(label)
 }
 
 func createImage(width int, height int, bgColor color.RGBA) *image.RGBA {
@@ -113,9 +113,9 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		y = 200
 	}
 
-	lable, _ := params["lable"]
-	if lable == "" || len(lable) > 20 {
-		lable = fmt.Sprintf("%d x %d", x, y)
+	label, _ := params["label"]
+	if label == "" || len(label) > 20 {
+		label = fmt.Sprintf("%d x %d", x, y)
 	}
 
 	bgColor, err := parseHexColor(params["bg"])
@@ -129,7 +129,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	}
 
 	image := createImage(x, y, bgColor)
-	addLable(image, x, y, lable, fgColor)
+	addLabel(image, x, y, label, fgColor)
 
 	buf := new(bytes.Buffer)
 	png.Encode(buf, image)
