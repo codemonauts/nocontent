@@ -6,7 +6,7 @@ Get customized placeholder images for your mockups and website designs :rocket:
  * Fast (delivered via a CDN)
  
 ## Usage
-The base URL is: `https://nocontent.xyz/img`
+The base URL is: `https://nocontent.cloud/img`
 
 To customize the image you will get, prodive one or more of the following options as query string parameters:
 
@@ -21,23 +21,23 @@ To customize the image you will get, prodive one or more of the following option
 ## Example #1
 Without any parameters you will get a small white image with black text and 200x200 px
 ```
-https://nocontent.xyz/img
+https://nocontent.cloud/img
 ```
-![200x200](https://nocontent.xyz/img)
+![200x200](https://nocontent.cloud/img)
 
 ## Example #2
 To get a purple image with the dimensions 600x400, query this address:
 ```
-https://nocontent.xyz/img?x=600&y=400&bg=980080
+https://nocontent.cloud/img?x=600&y=400&bg=980080
 ```
-![600x400](https://nocontent.xyz/img?x=600&y=400&bg=980080)
+![600x400](https://nocontent.cloud/img?x=600&y=400&bg=980080)
 
 ## Example #3
 Change the text color to blue and provide a custom text with this URL:
 ```
-https://nocontent.xyz/img?label=Hello%20World&fg=0099FF
+https://nocontent.cloud/img?label=Hello%20World&fg=0099FF
 ```
-![200x200](https://nocontent.xyz/img?label=Hello%20World&fg=0099FF)
+![200x200](https://nocontent.cloud/img?label=Hello%20World&fg=0099FF)
 
 
 
