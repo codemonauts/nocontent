@@ -19,6 +19,6 @@
   },
   "homepage": "https://nocontent.cloud",
   "devDependencies": {
-    "fiddly": "^0.8.0"
+    "fiddly": ""
   }
 }
