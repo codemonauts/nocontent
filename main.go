@@ -52,7 +52,7 @@ func parseHexColor(s string, fallback color.RGBA) color.RGBA {
 	return c
 }
 
-func addLabel(img *image.RGBA, width int, height int, label string, fg color.RGBA) {
+func addLabel(img *image.RGBA, width int, height int, label string, size int, fg color.RGBA) {
 	// Read the font data.
 	fontBytes, err := ioutil.ReadFile("Inconsolata.ttf")
 	if err != nil {
@@ -66,13 +66,12 @@ func addLabel(img *image.RGBA, width int, height int, label string, fg color.RGB
 	}
 	// Draw the text.
 	h := font.HintingFull
-	size := 30.0
 	dpi := 72.0
 	d := &font.Drawer{
 		Dst: img,
 		Src: image.NewUniform(fg),
 		Face: truetype.NewFace(f, &truetype.Options{
-			Size:    size,
+			Size:    float64(size),
 			DPI:     dpi,
 			Hinting: h,
 		}),
@@ -118,6 +117,8 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	y, _ := strconv.Atoi(params["y"])
 	y = validatePixelDimension(y)
 
+	fontSize, _ := strconv.Atoi(params["fontSize"])
+
 	label, _ := params["label"]
 	if label == "" || len(label) > 20 {
 		label = fmt.Sprintf("%d x %d", x, y)
@@ -128,7 +129,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	fgColor := parseHexColor(params["fg"], color.RGBA{51, 51, 51, 255})
 
 	image := createImage(x, y, bgColor)
-	addLabel(image, x, y, label, fgColor)
+	addLabel(image, x, y, label, fontSize, fgColor)
 
 	buf := new(bytes.Buffer)
 	png.Encode(buf, image)
