@@ -78,7 +78,7 @@ func addLabel(img *image.RGBA, width int, height int, label string, size int, fg
 	}
 	d.Dot = fixed.Point26_6{
 		X: (fixed.I(width) - d.MeasureString(label)) / 2,
-		Y: (fixed.I(height) + fixed.I(int(size))) / 2,
+		Y: (fixed.I(height) + fixed.I(int(float64(size)*0.6))) / 2,
 	}
 	d.DrawString(label)
 }
