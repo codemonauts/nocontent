@@ -1,0 +1,23 @@
+site_name: nocontent.cloud
+repo_url: https://github.com/codemonauts/nocontent
+site_dir: .docs
+dev_addr: 127.0.0.1:1080
+use_directory_urls: false
+extra_css:
+  - stylesheets/codemonauts.css
+theme:
+  name: material
+  logo: logo.svg
+  favicon: favicon.png
+  icon:
+    repo: fontawesome/brands/github
+  language: en
+  palette:
+    primary: custom
+    accent: custom
+  features:
+    - content.code.copy
+markdown_extensions:
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg

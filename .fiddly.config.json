@@ -1,9 +1,0 @@
-{
-    "logo": "./logo.png",
-    "favicon": "./favicon.ico",
-    "styles": {
-        "header .logo": {
-            "max-width": "initial"
-        }
-    }
-}
