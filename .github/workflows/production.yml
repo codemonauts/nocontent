@@ -1,0 +1,42 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - 'master'
+
+permissions:
+  id-token: write
+  contents: read 
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Build mkdocs
+        run: |
+          pip install mkdocs-material mkdocs-material-extensions
+          mkdocs -q build
+      
+      - name: Configure AWS Credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::167422901596:role/gha_nocontent
+          aws-region: "eu-central-1"
+      
+      - name: Upload docs
+        run: |
+          aws s3 sync --delete .docs/ s3://nocontent.xyz/
+  
+      - name: Invalidate Cloudfront
+        run: aws cloudfront create-invalidation --distribution-id "E1TX7G3VGQGAF4" --path "/*"
