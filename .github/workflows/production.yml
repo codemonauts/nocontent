@@ -29,7 +29,7 @@ jobs:
           mkdocs -q build
       
       - name: Configure AWS Credentials with OIDC
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::167422901596:role/gha_nocontent
           aws-region: "eu-central-1"
